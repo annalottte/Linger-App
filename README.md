@@ -54,7 +54,17 @@ Find the PC's Wi-Fi IPv4 address with `ipconfig`, then open `http://<PC-IP>:8081
 Native iOS builds require macOS and Xcode. The practical options are:
 
 1. On a Mac, clone this repository, run `flutter create . --platforms=ios`, connect the iPhone, trust the computer, and run `flutter run -d <device-id>`.
-2. Push the repository to GitHub and use a cloud macOS builder such as Codemagic or Bitrise. Connect an Apple Developer account, configure iOS signing, build an `.ipa`, and distribute it through TestFlight.
+2. Push the repository to GitHub and use the included `codemagic.yaml` workflow. Connect an Apple Developer account, configure iOS signing, build an `.ipa`, and distribute it through TestFlight.
+
+Before the first Codemagic build, replace `com.example.lingerApp` in both `codemagic.yaml` and `ios/Runner.xcodeproj/project.pbxproj` with a unique bundle identifier registered in your Apple Developer account. Replace `codemagic-apple` in `codemagic.yaml` with the exact name of your Codemagic App Store Connect integration.
+
+In Codemagic, configure the workflow with:
+
+- An App Store Connect API key integration with App Manager access.
+- Automatic iOS signing for the chosen bundle identifier, or matching uploaded distribution certificates and provisioning profiles.
+- An App Store Connect app record whose bundle ID matches the project.
+
+Then select the `ios-testflight` workflow and start a build. When processing finishes in App Store Connect, add the build to an internal TestFlight tester group and install it through the TestFlight app.
 
 The current app will install as a native iOS app once built, but it still uses `DemoMotionSensor`. Physical pick-up and orientation detection requires a native iOS `MotionSensor` adapter using Core Motion; that adapter should be added before treating an iPhone build as sensor validation.
 
